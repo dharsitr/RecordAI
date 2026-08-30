@@ -106,7 +106,7 @@ export const DashboardScreen = ({ navigation }: any) => {
       ) : (
         <FlatList
           data={experiments}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item: ExperimentWithRelations) => item.id}
           renderItem={renderExperimentItem}
           contentContainerStyle={styles.listContent}
           refreshControl={

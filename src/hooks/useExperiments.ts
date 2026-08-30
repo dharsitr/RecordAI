@@ -44,6 +44,7 @@ export function useExperiments(): UseExperimentsReturn {
         .order('created_at', { ascending: false });
 
       if (fetchErr) {
+        console.error('[useExperiments] Database query failed:', fetchErr);
         throw new Error(fetchErr.message || 'Failed to fetch experiments from database.');
       }
 
@@ -61,6 +62,7 @@ export function useExperiments(): UseExperimentsReturn {
           title: exp.title,
           subject: exp.subject,
           experiment_number: exp.experiment_number,
+          template_id: exp.template_id ?? null,
           created_at: exp.created_at,
           updated_at: exp.updated_at,
           processing_status: status,

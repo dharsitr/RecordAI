@@ -11,11 +11,11 @@ export const AppLayout: React.FC = () => {
       {/* Top Navbar */}
       <Navbar onToggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} />
 
-      {/* Persistent Left Sidebar */}
+      {/* Left Hover-Reveal / Mobile Sidebar */}
       <Sidebar mobileOpen={mobileMenuOpen} onCloseMobile={() => setMobileMenuOpen(false)} />
 
-      {/* Main Content Area with Desktop Sidebar Offset */}
-      <main className="transition-all duration-300 md:ml-64 min-h-[calc(100vh-65px)] p-4 sm:p-6 lg:p-8">
+      {/* Main Content Area - Full width workspace */}
+      <main className="transition-all duration-300 min-h-[calc(100vh-65px)] p-4 sm:p-6 lg:p-8">
         <div className="mx-auto max-w-7xl">
           <Outlet />
         </div>

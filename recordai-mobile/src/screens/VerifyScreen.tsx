@@ -54,7 +54,7 @@ export const VerifyScreen = ({ route, navigation }: any) => {
           .select('*')
           .eq('id', experimentId)
           .single();
-        if (exp) setExperiment(exp);
+        if (exp) setExperiment(exp as Experiment);
 
         // Fetch Documents
         const { data: docs } = await supabase
@@ -63,16 +63,17 @@ export const VerifyScreen = ({ route, navigation }: any) => {
           .eq('experiment_id', experimentId)
           .order('created_at', { ascending: true });
 
-        if (docs) {
-          setDocuments(docs);
+        const docList = (docs as Document[]) || [];
+        if (docList.length > 0) {
+          setDocuments(docList);
           const urlMap: Record<string, string> = {};
-          for (const d of docs) {
+          for (const d of docList) {
             const { data: pubData } = supabase.storage.from('lab-uploads').getPublicUrl(d.file_path);
             if (pubData?.publicUrl) urlMap[d.id] = pubData.publicUrl;
           }
           setSignedImageUrls(urlMap);
 
-          const docIds = docs.map((d) => d.id);
+          const docIds = docList.map((d) => d.id);
 
           // Fetch Sections
           const { data: secData } = await supabase
@@ -85,8 +86,9 @@ export const VerifyScreen = ({ route, navigation }: any) => {
             sMap[s.key] = { section_type: s.key, content: '', confidence: null };
           });
 
-          if (secData) {
-            secData.forEach((s) => {
+          const secList = (secData as Section[]) || [];
+          if (secList.length > 0) {
+            secList.forEach((s) => {
               const k = (s.section_type || '').toLowerCase();
               sMap[k] = {
                 id: s.id,
@@ -103,7 +105,7 @@ export const VerifyScreen = ({ route, navigation }: any) => {
             .from('observation_tables')
             .select('*')
             .in('document_id', docIds);
-          if (tblData) setTables(tblData);
+          if (tblData) setTables((tblData as ObservationTable[]) || []);
         }
       } catch (err) {
         console.error('[VerifyScreen] Load error:', err);
@@ -133,14 +135,14 @@ export const VerifyScreen = ({ route, navigation }: any) => {
       const secPromises = Object.values(sectionMap).map(async (item) => {
         if (!item.content && !item.id) return;
         if (item.id) {
-          await supabase.from('sections').update({ content: item.content }).eq('id', item.id);
+          await supabase.from('sections').update({ content: item.content } as any).eq('id', item.id);
         } else {
           await supabase.from('sections').insert({
             document_id: primaryDocId,
             section_type: item.section_type,
             content: item.content,
             confidence: 1.0,
-          });
+          } as any);
         }
       });
 
@@ -240,7 +242,7 @@ export const VerifyScreen = ({ route, navigation }: any) => {
                   style={[styles.secInput, isLowConfidence && styles.lowConfidenceInput]}
                   multiline
                   value={secData.content}
-                  onChangeText={(text) => handleSectionContentChange(secDef.key, text)}
+                  onChangeText={(text: string) => handleSectionContentChange(secDef.key, text)}
                   placeholder={`Enter ${secDef.title} content...`}
                   placeholderTextColor="#6b7280"
                 />

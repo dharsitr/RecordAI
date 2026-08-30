@@ -47,10 +47,8 @@ Deno.serve(async (req: Request) => {
       experiment: exp,
       templateConfig,
       sections,
-      sectionMap,
       tables,
       calculations,
-      chartTable,
     } = await fetchExperimentRecordData(supabase, experiment_id);
 
     // =========================================================================

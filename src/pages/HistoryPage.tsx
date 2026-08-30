@@ -61,7 +61,7 @@ export const HistoryPage: React.FC = () => {
         .order('created_at', { ascending: false });
 
       if (err) throw err;
-      setExperiments((data as ExperimentWithRelations[]) || []);
+      setExperiments((data as unknown as ExperimentWithRelations[]) || []);
     } catch (err: any) {
       console.error('[HistoryPage] Load error:', err);
       setError(err?.message || 'Failed loading experiment history records');

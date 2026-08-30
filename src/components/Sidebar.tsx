@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   BookOpen,
   Calculator,
+  ChevronRight,
   FilePlus,
   FileText,
   History,
@@ -18,6 +19,8 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onCloseMobile }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
   const mainNavItems = [
     {
       label: 'Dashboard',
@@ -61,6 +64,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onCloseMob
     },
   ];
 
+  const handleNavClick = () => {
+    setIsHovered(false);
+    if (onCloseMobile) onCloseMobile();
+  };
+
+  const isVisible = mobileOpen || isHovered;
+
   return (
     <>
       {/* Mobile Backdrop */}
@@ -71,10 +81,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onCloseMob
         />
       )}
 
-      {/* Sidebar Container */}
+      {/* Desktop Left-Edge Hover Trigger Strip */}
+      <div
+        onMouseEnter={() => setIsHovered(true)}
+        className="fixed top-[65px] bottom-0 left-0 w-5 z-40 hidden md:flex items-center group cursor-pointer"
+        title="Move mouse here to show menu"
+      >
+        <div className="h-28 w-1.5 rounded-r-full bg-emerald-500/30 group-hover:bg-emerald-400 group-hover:w-2 group-hover:shadow-[0_0_12px_rgba(16,185,129,0.7)] transition-all duration-300 flex items-center justify-center">
+          <ChevronRight className="h-3 w-3 text-emerald-300 opacity-0 group-hover:opacity-100 transition-opacity -ml-0.5" />
+        </div>
+      </div>
+
+      {/* Slide-out Sidebar Container */}
       <aside
-        className={`fixed top-[65px] bottom-0 left-0 z-40 w-64 border-r border-gray-800/60 bg-[#0b0f19]/95 backdrop-blur-xl transition-transform duration-300 md:translate-x-0 ${
-          mobileOpen ? 'translate-x-0' : '-translate-x-full'
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className={`fixed top-[65px] bottom-0 left-0 z-50 w-64 border-r border-emerald-500/20 bg-[#0b0f19]/95 backdrop-blur-2xl shadow-2xl shadow-black/90 transition-transform duration-300 ease-out ${
+          isVisible ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex h-full flex-col justify-between p-4 overflow-y-auto">
@@ -103,7 +126,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onCloseMob
                       key={item.path}
                       to={item.path}
                       end={item.end}
-                      onClick={onCloseMobile}
+                      onClick={handleNavClick}
                       className={({ isActive }) =>
                         `flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all ${
                           isActive
@@ -134,7 +157,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onCloseMob
                     <NavLink
                       key={item.path}
                       to={item.path}
-                      onClick={onCloseMobile}
+                      onClick={handleNavClick}
                       className={({ isActive }) =>
                         `flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all ${
                           isActive
